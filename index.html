@@ -1,55 +1,65 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-MQ0WMMRZH5');
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>祝您有個美好的一天</title>
-    <meta property="og:title" content="🌞 早安！送您一份暖心祝福">
-    <meta property="og:description" content="點擊查看今日份的幸福...">
-    <meta property="og:image" content="https://res.cloudinary.com/dwdkxs8ot/image/upload/v1770192527/q12qcpfxm9zeaetnyccu.jpg">
+    <title>您收到了一份早安祝福</title>
+    <meta property="og:title" content=" "> <meta property="og:description" content="點擊查看今日暖心早安圖">
+    
+    <meta property="og:image" content="https://res.cloudinary.com/dwdkxs8ot/image/upload/c_fill,ar_1.91,w_1200/morning_1.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:type" content="website">
 
     <style>
-        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #f0f0f0; font-family: sans-serif; }
-        .container { text-align: center; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 90%; max-width: 500px; }
-        img { width: 100%; border-radius: 10px; margin-bottom: 15px; }
-        button { background: #00b900; color: white; border: none; padding: 12px 25px; border-radius: 25px; font-size: 16px; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #009000; }
+        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #fffcf2; font-family: sans-serif; }
+        .container { text-align: center; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); width: 85%; max-width: 450px; }
+        img { width: 100%; border-radius: 12px; display: block; margin-bottom: 20px; min-height: 200px; background: #eee; }
+        .share-btn { background: #00b900; color: white; border: none; padding: 16px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; box-shadow: 0 4px 12px rgba(0,185,0,0.3); }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h2 id="greeting">載入中...</h2>
-        <img id="random-image" src="" alt="早安圖">
-        <p>點擊下方按鈕，把這份祝福分享給更多好友！</p>
-        <button onclick="share()">分享祝福給好友 ➔</button>
+        <img id="random-image" src="https://res.cloudinary.com/dwdkxs8ot/image/upload/morning_1.jpg" alt="早安圖">
+        <p>點擊下方按鈕，把這份祝福分享出去！</p>
+        <button class="share-btn" onclick="shareAndTrack()">傳送給好友 ➔</button>
     </div>
 
     <script>
-        // 1. 設定你的 Cloudinary 圖片編號
+        // 修正後的隨機圖片邏輯
         const imgCount = 3; 
         const randomId = Math.floor(Math.random() * imgCount) + 1;
+        
+        // 檢查：如果您的圖片在 Cloudinary 沒有建 "morning" 資料夾，請使用下方的網址格式
         const imageUrl = `https://res.cloudinary.com/dwdkxs8ot/image/upload/morning_${randomId}.jpg`;
         
-        // 2. 顯示隨機圖片
-        document.getElementById('random-image').src = imageUrl;
-        document.getElementById('greeting').innerText = "🌞 您收到了一份早安祝福";
+        const imgElement = document.getElementById('random-image');
+        imgElement.src = imageUrl;
+        document.getElementById('greeting').innerText = "🌞 早安祝福";
 
-        // 3. 追蹤邏輯：取得網址上的來源 (ref)
         const urlParams = new URLSearchParams(window.location.search);
-        const ref = urlParams.get('ref') || 'original';
+        const source = urlParams.get('utm_source') || 'direct';
 
-        // 這裡可以串接你的後台 API 或是 Google Forms 紀錄「誰(ref) 成功吸引了誰點開」
-        console.log(`數據紀錄：來源 ${ref} 的圖片被點開了！`);
+        function shareAndTrack() {
+            gtag('event', 'share_click', { 'from': source });
 
-        // 4. 分享功能 (帶入新的參數)
-        function share() {
-            // 這裡可以自定義新的 ID，或是簡單地沿用
-            const newSender = "User_" + Math.floor(Math.random() * 1000); 
-            const shareLink = `${window.location.origin}${window.location.pathname}?ref=${newSender}`;
-            const lineUrl = `https://line.me/R/share?text=${encodeURIComponent("這張早安圖送給你！ " + shareLink)}`;
+            const newId = "U" + Math.floor(Math.random() * 10000);
+            // 這裡非常重要：網址必須完整，且不帶過多文字，才能觸發大圖
+            const shareLink = `https://tina371011-1126.github.io/good-morning_V2/?utm_source=${newId}`;
+            
+            // 修正：分享文字將網址放在最前面，增加大圖觸發率
+            const lineUrl = `https://line.me/R/share?text=${encodeURIComponent(shareLink + "\n這張早安圖送給你，祝你天天好心情！")}`;
             
             window.location.href = lineUrl;
         }
