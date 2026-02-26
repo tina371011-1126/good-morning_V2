@@ -12,21 +12,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>您收到了一份早安祝福</title>
-    <meta property="og:title" content=" "> <meta property="og:description" content="🌞 點擊查看今日份的幸福...">
+    <title>早安</title>
+    <meta property="og:title" content="ㅤ"> 
+    <meta property="og:description" content="ㅤ">
     
     <meta property="og:image" content="https://res.cloudinary.com/dwdkxs8ot/image/upload/c_fill,ar_1.91,w_1200/v1772095433/morning_1_npzo9f.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:type" content="website">
-
-    <style>
-        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #fffcf2; font-family: "Microsoft JhengHei", sans-serif; }
+    <meta property="og:type" content="article"> <style>
+        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #fffcf2; font-family: sans-serif; }
         .container { text-align: center; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); width: 85%; max-width: 450px; }
-        img { width: 100%; border-radius: 12px; display: block; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .share-btn { background: #00b900; color: white; border: none; padding: 16px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; box-shadow: 0 4px 12px rgba(0,185,0,0.3); transition: 0.2s; }
-        .share-btn:active { transform: scale(0.98); }
-        p { color: #7f8c8d; font-size: 14px; }
+        img { width: 100%; border-radius: 12px; display: block; margin-bottom: 20px; }
+        .share-btn { background: #00b900; color: white; border: none; padding: 16px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; box-shadow: 0 4px 12px rgba(0,185,0,0.3); }
     </style>
 </head>
 <body>
@@ -34,47 +31,33 @@
     <div class="container">
         <h2 id="greeting">🌞 早安祝福</h2>
         <img id="random-image" src="" alt="早安圖">
-        <p>正能量的傳遞，從一張圖開始。<br>點擊按鈕把祝福分享給好友！</p>
-        <button class="share-btn" onclick="shareAndTrack()">傳送這份祝福 ➔</button>
+        <p>點擊下方按鈕，把這份祝福傳送給好友</p>
+        <button class="share-btn" onclick="shareAndTrack()">傳送大圖給好友 ➔</button>
     </div>
 
     <script>
-        // 1. 定義您的專屬圖片陣列
         const imageUrls = [
             "https://res.cloudinary.com/dwdkxs8ot/image/upload/v1772095433/morning_1_npzo9f.jpg",
             "https://res.cloudinary.com/dwdkxs8ot/image/upload/v1772095434/morning_2_q5hbzf.jpg"
         ];
 
-        // 2. 隨機選取一張圖片顯示在網頁上
         const randomIndex = Math.floor(Math.random() * imageUrls.length);
-        const selectedImage = imageUrls[randomIndex];
-        document.getElementById('random-image').src = selectedImage;
+        document.getElementById('random-image').src = imageUrls[randomIndex];
 
-        // 3. 取得目前網址的來源參數 (追蹤是誰傳的)
         const urlParams = new URLSearchParams(window.location.search);
-        const currentSource = urlParams.get('utm_source') || 'seed_user';
+        const currentSource = urlParams.get('utm_source') || 'seed';
 
-        // 4. 點擊按鈕後的邏輯：發送數據到 GA4 並打開 LINE 分享
         function shareAndTrack() {
-            // 發送事件到 GA4
-            gtag('event', 'share_click', {
-                'from_source': currentSource
-            });
+            gtag('event', 'share_click', { 'from': currentSource });
 
-            // 產生一個新的分享 ID (代表目前的發送者)
-            const newUserId = "User_" + Math.floor(Math.random() * 9000 + 1000);
+            const newId = "U" + Math.floor(Math.random() * 9000 + 1000);
+            const shareLink = `https://tina371011-1126.github.io/good-morning_V2/?utm_source=${newId}`;
             
-            // 構建帶有追蹤參數的分享連結
-            const shareLink = `https://tina371011-1126.github.io/good-morning_V2/?utm_source=${newUserId}`;
+            // 【修正】只傳送網址，不帶任何文字
+            // 當訊息只有網址時，LINE 會自動將該網址的 OG 預覽圖放大
+            const lineUrl = `https://line.me/R/share?text=${encodeURIComponent(shareLink)}`;
             
-            // 呼叫 LINE 分享介面
-            // 技巧：網址放最前面，增加大圖預覽成功率
-            const lineUrl = `https://line.me/R/share?text=${encodeURIComponent(shareLink + "\n早安！送你一張暖心祝福圖，祝你天天好心情！")}`;
-            
-            // 延遲一點點時間跳轉，確保 GA4 數據發送成功
-            setTimeout(() => {
-                window.location.href = lineUrl;
-            }, 300);
+            window.location.href = lineUrl;
         }
     </script>
 </body>
