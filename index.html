@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>祝您有個美好的一天</title>
+    <meta property="og:title" content="🌞 早安！送您一份暖心祝福">
+    <meta property="og:description" content="點擊查看今日份的幸福...">
+    <meta property="og:image" content="https://res.cloudinary.com/dwdkxs8ot/image/upload/morning_1.jpg">
+    <meta property="og:type" content="website">
+
+    <style>
+        body { display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: #f0f0f0; font-family: sans-serif; }
+        .container { text-align: center; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 90%; max-width: 500px; }
+        img { width: 100%; border-radius: 10px; margin-bottom: 15px; }
+        button { background: #00b900; color: white; border: none; padding: 12px 25px; border-radius: 25px; font-size: 16px; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #009000; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2 id="greeting">載入中...</h2>
+        <img id="random-image" src="" alt="早安圖">
+        <p>點擊下方按鈕，把這份祝福分享給更多好友！</p>
+        <button onclick="share()">分享祝福給好友 ➔</button>
+    </div>
+
+    <script>
+        // 1. 設定你的 Cloudinary 圖片編號
+        const imgCount = 3; 
+        const randomId = Math.floor(Math.random() * imgCount) + 1;
+        const imageUrl = `https://res.cloudinary.com/dwdkxs8ot/image/upload/morning_${randomId}.jpg`;
+        
+        // 2. 顯示隨機圖片
+        document.getElementById('random-image').src = imageUrl;
+        document.getElementById('greeting').innerText = "🌞 您收到了一份早安祝福";
+
+        // 3. 追蹤邏輯：取得網址上的來源 (ref)
+        const urlParams = new URLSearchParams(window.location.search);
+        const ref = urlParams.get('ref') || 'original';
+
+        // 這裡可以串接你的後台 API 或是 Google Forms 紀錄「誰(ref) 成功吸引了誰點開」
+        console.log(`數據紀錄：來源 ${ref} 的圖片被點開了！`);
+
+        // 4. 分享功能 (帶入新的參數)
+        function share() {
+            // 這裡可以自定義新的 ID，或是簡單地沿用
+            const newSender = "User_" + Math.floor(Math.random() * 1000); 
+            const shareLink = `${window.location.origin}${window.location.pathname}?ref=${newSender}`;
+            const lineUrl = `https://line.me/R/share?text=${encodeURIComponent("這張早安圖送給你！ " + shareLink)}`;
+            
+            window.location.href = lineUrl;
+        }
+    </script>
+</body>
+</html>
